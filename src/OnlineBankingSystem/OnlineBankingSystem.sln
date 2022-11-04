@@ -5,6 +5,8 @@ VisualStudioVersion = 17.3.32804.467
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineBankingSystem.Domain", "OnlineBankingSystem.Domain\OnlineBankingSystem.Domain.csproj", "{41BE84C6-06AB-4AA0-8DAF-50D7AE4C76BD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineBankingSystem.Persistence", "OnlineBankingSystem.Persistence\OnlineBankingSystem.Persistence.csproj", "{B8903A45-B0B8-421A-933A-CDBD1172CA0F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{41BE84C6-06AB-4AA0-8DAF-50D7AE4C76BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41BE84C6-06AB-4AA0-8DAF-50D7AE4C76BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41BE84C6-06AB-4AA0-8DAF-50D7AE4C76BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8903A45-B0B8-421A-933A-CDBD1172CA0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8903A45-B0B8-421A-933A-CDBD1172CA0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8903A45-B0B8-421A-933A-CDBD1172CA0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8903A45-B0B8-421A-933A-CDBD1172CA0F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

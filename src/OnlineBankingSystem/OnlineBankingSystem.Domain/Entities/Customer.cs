@@ -39,7 +39,7 @@ namespace OnlineBankingSystem.Domain.Entities
 
         [Required]
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
-        public DateOnly DateOfBirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
 
         [Required]
         [StringLength(9, MinimumLength = 9)]

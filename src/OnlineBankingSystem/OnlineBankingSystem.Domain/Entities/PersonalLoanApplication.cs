@@ -32,9 +32,11 @@ namespace OnlineBankingSystem.Domain.Entities
         public Customer Customer { get; set; }
 
         [Required]
-        public DateOnly ApplicationDate { get; set; }
+        [DisplayFormat(DataFormatString = "0:{MM/dd/yyyy}")]
+        public DateTime ApplicationDate { get; set; }
 
-        public DateOnly ApprovalDate { get; set; }
+        [DisplayFormat(DataFormatString = "0:{MM/dd/yyyy}")]
+        public DateTime ApprovalDate { get; set; }
 
         [Required]
         public PersonalLoanApplicationStatus status { get; set; }
