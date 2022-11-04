@@ -41,6 +41,7 @@ namespace OnlineBankingSystem.Domain.Entities
         [InverseProperty("ToAccount")]
         public List<Transaction> ReceivedTransactions { get; set; }
 
+        [ForeignKey("Beneficiary")]
         public List<BankAccount> Beneficiaries { get; set; }
     }
 }
