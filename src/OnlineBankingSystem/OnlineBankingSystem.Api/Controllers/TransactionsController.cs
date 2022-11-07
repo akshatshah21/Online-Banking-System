@@ -44,43 +44,74 @@ namespace OnlineBankingSystem.Api.Controllers
 
         // PUT: api/Transactions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTransaction(string id, Transaction transaction)
-        {
-            if (id != transaction.Id)
-            {
-                return BadRequest();
-            }
+        // [HttpPut("{id}")]
+        // public async Task<IActionResult> PutTransaction(string id, Transaction transaction)
+        // {
+        //     if (id != transaction.Id)
+        //     {
+        //         return BadRequest();
+        //     }
 
-            _context.Entry(transaction).State = EntityState.Modified;
+        //     _context.Entry(transaction).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TransactionExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //     try
+        //     {
+        //         await _context.SaveChangesAsync();
+        //     }
+        //     catch (DbUpdateConcurrencyException)
+        //     {
+        //         if (!TransactionExists(id))
+        //         {
+        //             return NotFound();
+        //         }
+        //         else
+        //         {
+        //             throw;
+        //         }
+        //     }
 
-            return NoContent();
-        }
+        //     return NoContent();
+        // }
 
         // POST: api/Transactions
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Transaction>> PostTransaction(Transaction transaction)
+
+        private bool DoesBankAccountExist(string id)
         {
-            _context.Transactions.Add(transaction);
+            return _context.BankAccounts.Any(e => e.AccountNumber == id);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Transaction>> PostTransaction(string from, string to, double amount)
+        {
+            
+            // _context.Transactions.Add(transaction);
+            // What is conflict.
+            if(!DoesBankAccountExist(to)) {
+                return Conflict();
+            }
+
+            var sender = await _context.FindAsync(from);
+            var receiver = await _context.FindAsync(to);
+            
+            var bal = sender.Balance;
+            var min_bal = sender.MinBalance;
+            if(amount < 0) {
+                return Conflict("Amount can't be negative");
+            }
+
+            if(bal - amount < min_bal) {
+                return Conflict("Min_balance requirement not met.");
+            }
+
+            _context.Entry(sender).State = EntityState.Modified;
+            _context.Entry(receiver).State = EntityState.Modified;
+
             try
             {
+                sender.Balance -= amount;
+                receiver.Balance += amount;
+                // var transaction = await 
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
