@@ -114,9 +114,48 @@ namespace OnlineBankingSystem.Api.Controllers
             return NoContent();
         }
 
+        // POST: api/BankAccounts/5/AddBeneficiary
+        [HttpPut("{id}/AddBeneficiary")]
+        public async Task<IActionResult> AddBeneficiary(string accountNumber, string beneficiaryAccountNumber, string beneficiaryRoutingNumber)
+        {
+            var bankAccount = await _context.BankAccounts.FindAsync(accountNumber);
+            if (bankAccount == null)
+            {
+                return NotFound("Account does not exist");
+            }
+            if (bankAccount.Beneficiaries.Any(b => b.AccountNumber == beneficiaryAccountNumber))
+            {
+                return BadRequest("Beneficiary already exists");
+            }
+
+            var beneficiary = await _context.BankAccounts.FindAsync(beneficiaryAccountNumber);
+            if (beneficiary == null)
+            {
+                return NotFound("Beneficiary account does not exist");
+            }
+            if (beneficiary.RoutingNumber != beneficiaryRoutingNumber)
+            {
+                return NotFound("Beneficiary account does not exist");
+            }
+            bankAccount.Beneficiaries.Add(beneficiary);
+            _context.Entry(bankAccount).State = EntityState.Modified;
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                throw;
+            }
+            return Ok();
+        }
+
+
         private bool BankAccountExists(string id)
         {
             return _context.BankAccounts.Any(e => e.AccountNumber == id);
         }
+
+
     }
 }
