@@ -20,6 +20,8 @@ namespace OnlineBankingSystem.Domain.Entities
             AccountNumber = Guid.NewGuid().ToString();
             SentTransactions = new List<Transaction>();
             ReceivedTransactions = new List<Transaction>();
+            Beneficiaries = new List<BankAccount>();
+            BeneficiaryOf = new List<BankAccount>();
         }
 
         [Key]
@@ -48,7 +50,8 @@ namespace OnlineBankingSystem.Domain.Entities
         [InverseProperty("ToAccount")]
         public List<Transaction> ReceivedTransactions { get; set; }
 
-        [ForeignKey("Beneficiary")]
         public List<BankAccount> Beneficiaries { get; set; }
+
+        public List<BankAccount> BeneficiaryOf { get; set; }
     }
 }

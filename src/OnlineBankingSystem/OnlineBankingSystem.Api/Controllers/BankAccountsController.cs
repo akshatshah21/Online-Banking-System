@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OnlineBankingSystem.Domain.Entities;
+using OnlineBankingSystem.Domain.Models;
 using OnlineBankingSystem.Persistence.Data;
 
 namespace OnlineBankingSystem.Api.Controllers
@@ -15,22 +17,25 @@ namespace OnlineBankingSystem.Api.Controllers
     public class BankAccountsController : ControllerBase
     {
         private readonly OnlineBankingSystemDbContext _context;
+        private readonly IMapper _mapper;
 
-        public BankAccountsController(OnlineBankingSystemDbContext context)
+        public BankAccountsController(OnlineBankingSystemDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/BankAccounts
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BankAccount>>> GetBankAccounts()
+        public async Task<ActionResult<IEnumerable<BankAccountDto>>> GetBankAccounts()
         {
-            return await _context.BankAccounts.ToListAsync();
+            IEnumerable<BankAccount> bankAccounts = await _context.BankAccounts.ToListAsync();
+            return Ok(_mapper.Map<IEnumerable<BankAccount>, IEnumerable<BankAccountDto>>(bankAccounts));
         }
 
         // GET: api/BankAccounts/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<BankAccount>> GetBankAccount(string id)
+        public async Task<ActionResult<BankAccountDto>> GetBankAccount(string id)
         {
             var bankAccount = await _context.BankAccounts.FindAsync(id);
 
@@ -39,20 +44,20 @@ namespace OnlineBankingSystem.Api.Controllers
                 return NotFound();
             }
 
-            return bankAccount;
+            return _mapper.Map<BankAccount, BankAccountDto>(bankAccount);
         }
 
         // PUT: api/BankAccounts/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutBankAccount(string id, BankAccount bankAccount)
+        [HttpPut("{accountNumber}")]
+        public async Task<IActionResult> PutBankAccount(string accountNumber, BankAccountDto bankAccountDto)
         {
-            if (id != bankAccount.AccountNumber)
+            var bankAcccount = await _context.BankAccounts.FindAsync(accountNumber);
+            if (bankAcccount == null)
             {
-                return BadRequest();
+                return NotFound();
             }
-
-            _context.Entry(bankAccount).State = EntityState.Modified;
+            _mapper.Map(bankAccountDto, bankAcccount);
 
             try
             {
@@ -60,7 +65,7 @@ namespace OnlineBankingSystem.Api.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BankAccountExists(id))
+                if (!BankAccountExists(accountNumber))
                 {
                     return NotFound();
                 }
@@ -76,8 +81,16 @@ namespace OnlineBankingSystem.Api.Controllers
         // POST: api/BankAccounts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<BankAccount>> PostBankAccount(BankAccount bankAccount)
+        public async Task<ActionResult<BankAccountDto>> PostBankAccount(BankAccountDto bankAccountDto)
         {
+            var customer = await _context.Customers.FindAsync(bankAccountDto.CustomerId);
+            if (customer == null)
+            {
+                return NotFound("Customer not found");
+            }
+
+            BankAccount bankAccount = _mapper.Map<BankAccountDto, BankAccount>(bankAccountDto);
+
             _context.BankAccounts.Add(bankAccount);
             try
             {
@@ -95,14 +108,14 @@ namespace OnlineBankingSystem.Api.Controllers
                 }
             }
 
-            return CreatedAtAction("GetBankAccount", new { id = bankAccount.AccountNumber }, bankAccount);
+            return CreatedAtAction("GetBankAccount", new { id = bankAccount.AccountNumber }, _mapper.Map<BankAccount, BankAccountDto>(bankAccount));
         }
 
         // DELETE: api/BankAccounts/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBankAccount(string id)
+        [HttpDelete("{accountNumber}")]
+        public async Task<IActionResult> DeleteBankAccount(string accountNumber)
         {
-            var bankAccount = await _context.BankAccounts.FindAsync(id);
+            var bankAccount = await _context.BankAccounts.FindAsync(accountNumber);
             if (bankAccount == null)
             {
                 return NotFound();
@@ -115,30 +128,33 @@ namespace OnlineBankingSystem.Api.Controllers
         }
 
         // POST: api/BankAccounts/5/AddBeneficiary
-        [HttpPut("{id}/AddBeneficiary")]
-        public async Task<IActionResult> AddBeneficiary(string accountNumber, string beneficiaryAccountNumber, string beneficiaryRoutingNumber)
+        [HttpPost("{accountNumber}/add-beneficiary")]
+        public async Task<IActionResult> AddBeneficiary(string accountNumber, [FromBody] BeneficiaryDto addBeneficiaryDto)
         {
             var bankAccount = await _context.BankAccounts.FindAsync(accountNumber);
             if (bankAccount == null)
             {
                 return NotFound("Account does not exist");
             }
-            if (bankAccount.Beneficiaries.Any(b => b.AccountNumber == beneficiaryAccountNumber))
+            Console.WriteLine(addBeneficiaryDto.RoutingNumber);
+            if (bankAccount.Beneficiaries.Any(b => b.AccountNumber == addBeneficiaryDto.AccountNumber))
             {
                 return BadRequest("Beneficiary already exists");
             }
 
-            var beneficiary = await _context.BankAccounts.FindAsync(beneficiaryAccountNumber);
+            var beneficiary = await _context.BankAccounts.FindAsync(addBeneficiaryDto.AccountNumber);
             if (beneficiary == null)
             {
                 return NotFound("Beneficiary account does not exist");
             }
-            if (beneficiary.RoutingNumber != beneficiaryRoutingNumber)
+            if (beneficiary.RoutingNumber != addBeneficiaryDto.RoutingNumber)
             {
                 return NotFound("Beneficiary account does not exist");
             }
             bankAccount.Beneficiaries.Add(beneficiary);
+            beneficiary.BeneficiaryOf.Add(bankAccount);
             _context.Entry(bankAccount).State = EntityState.Modified;
+            _context.Entry(beneficiary).State = EntityState.Modified;
             try
             {
                 await _context.SaveChangesAsync();
@@ -148,6 +164,21 @@ namespace OnlineBankingSystem.Api.Controllers
                 throw;
             }
             return Ok();
+        }
+
+
+        [HttpGet("{accountNumber}/beneficiaries")]
+        public async Task<ActionResult<IEnumerable<BeneficiaryDto>>> GetBeneficiaries(string accountNumber)
+        {
+            var bankAccount = await _context.BankAccounts.FindAsync(accountNumber);
+            if (bankAccount == null)
+            {
+                return NotFound();
+            }
+
+            IEnumerable<BankAccount> beneficiaryAccounts = bankAccount.Beneficiaries;
+            IEnumerable<BankAccountDto> beneficiaries = _mapper.Map<IEnumerable<BankAccount>, IEnumerable<BankAccountDto>>(beneficiaryAccounts);
+            return Ok(beneficiaries);
         }
 
 
