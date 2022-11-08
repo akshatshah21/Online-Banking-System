@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace OnlineBankingSystem.Persistence.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class v0 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -91,9 +91,9 @@ namespace OnlineBankingSystem.Persistence.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Amount = table.Column<double>(type: "float", nullable: false),
                     Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FromAccountId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ToAccountId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    FromAccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ToAccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -102,14 +102,12 @@ namespace OnlineBankingSystem.Persistence.Migrations
                         name: "FK_Transactions_BankAccounts_FromAccountId",
                         column: x => x.FromAccountId,
                         principalTable: "BankAccounts",
-                        principalColumn: "AccountNumber",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "AccountNumber");
                     table.ForeignKey(
                         name: "FK_Transactions_BankAccounts_ToAccountId",
                         column: x => x.ToAccountId,
                         principalTable: "BankAccounts",
-                        principalColumn: "AccountNumber",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "AccountNumber");
                 });
 
             migrationBuilder.CreateIndex(

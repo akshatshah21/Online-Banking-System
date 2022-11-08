@@ -12,8 +12,8 @@ using OnlineBankingSystem.Persistence.Data;
 namespace OnlineBankingSystem.Persistence.Migrations
 {
     [DbContext(typeof(OnlineBankingSystemDbContext))]
-    [Migration("20221104141857_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20221108124457_v0")]
+    partial class v0
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -158,18 +158,15 @@ namespace OnlineBankingSystem.Persistence.Migrations
                         .HasColumnType("float");
 
                     b.Property<string>("Comment")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FromAccountId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ToAccountId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -211,15 +208,11 @@ namespace OnlineBankingSystem.Persistence.Migrations
                 {
                     b.HasOne("OnlineBankingSystem.Domain.Entities.BankAccount", "FromAccount")
                         .WithMany("SentTransactions")
-                        .HasForeignKey("FromAccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("FromAccountId");
 
                     b.HasOne("OnlineBankingSystem.Domain.Entities.BankAccount", "ToAccount")
                         .WithMany("ReceivedTransactions")
-                        .HasForeignKey("ToAccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ToAccountId");
 
                     b.Navigation("FromAccount");
 

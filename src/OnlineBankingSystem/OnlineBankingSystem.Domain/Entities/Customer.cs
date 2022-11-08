@@ -11,7 +11,7 @@ namespace OnlineBankingSystem.Domain.Entities
 {
     public class Customer
     {
-        public Customer(string password, string firstName, string lastName, string contactNumber, string emailAddress, string address, DateTime dateOfBirth, string ssn, List<BankAccount> bankAccounts, List<PersonalLoanApplication> personalLoanApplications)
+        public Customer(string password, string firstName, string lastName, string contactNumber, string emailAddress, string address, DateTime dateOfBirth, string ssn)
         {
             Password = password;
             FirstName = firstName;
@@ -21,8 +21,6 @@ namespace OnlineBankingSystem.Domain.Entities
             Address = address;
             DateOfBirth = dateOfBirth;
             Ssn = ssn;
-            BankAccounts = bankAccounts;
-            PersonalLoanApplications = personalLoanApplications;
 
             Id = Guid.NewGuid().ToString();
             CreatedAt = DateTime.Now;

@@ -10,13 +10,12 @@ namespace OnlineBankingSystem.Domain.Entities
 {
     public class PersonalLoanApplication
     {
-        public PersonalLoanApplication(double amount, double interestRate, int term, string customerId, Customer customer)
+        public PersonalLoanApplication(double amount, double interestRate, int term, string customerId)
         {
             Amount = amount;
             InterestRate = interestRate;
             Term = term;
             CustomerId = customerId;
-            Customer = customer;
 
             Id = Guid.NewGuid().ToString();
             ApplicationDate = DateTime.Now;

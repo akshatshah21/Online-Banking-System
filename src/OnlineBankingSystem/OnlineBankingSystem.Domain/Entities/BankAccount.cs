@@ -8,10 +8,9 @@ namespace OnlineBankingSystem.Domain.Entities
 {
     public class BankAccount
     {
-        public BankAccount(string customerId, Customer customer, double balance, double minBalance, double interestRate, BankAccountType type, string routingNumber)
+        public BankAccount(string customerId, double balance, double minBalance, double interestRate, BankAccountType type, string routingNumber)
         {
             CustomerId = customerId;
-            this.customer = customer;
             Balance = balance;
             MinBalance = minBalance;
             InterestRate = interestRate;
