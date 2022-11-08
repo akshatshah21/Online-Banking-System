@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'app-view-balance',
@@ -6,6 +6,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./view-balance.component.css']
 })
 export class ViewBalanceComponent implements OnInit {
+
+  @Input() acc_number: string;
 
   constructor() { }
 

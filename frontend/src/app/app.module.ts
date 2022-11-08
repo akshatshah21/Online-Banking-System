@@ -8,6 +8,7 @@ import { ButtonComponent } from './components/button/button.component';
 import { AccountDetailsComponent } from './components/account-details/account-details.component';
 import { ViewBalanceComponent } from './components/view-balance/view-balance.component';
 import { TransferComponent } from './components/transfer/transfer.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { TransferComponent } from './components/transfer/transfer.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    FontAwesomeModule
   ],
   providers: [],
   bootstrap: [AppComponent]
