@@ -21,17 +21,15 @@ namespace OnlineBankingSystem.Domain.Entities
         public DateTime Timestamp { get; set; }
 
         // Foreign Key
-        [Required]
-        public string FromAccountId { get; set; }
+        public string? FromAccountId { get; set; }
         // Reference navigation property
-        public BankAccount FromAccount { get; set; }
+        public BankAccount? FromAccount { get; set; }
 
 
         // Foreign Key
-        [Required]
-        public string ToAccountId { get; set; }
+        public string? ToAccountId { get; set; }
         // Reference navigation property
-        public BankAccount ToAccount { get; set; }
+        public BankAccount? ToAccount { get; set; }
 
         public string Comment { get; set; }
     }

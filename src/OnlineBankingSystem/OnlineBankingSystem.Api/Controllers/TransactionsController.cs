@@ -82,17 +82,21 @@ namespace OnlineBankingSystem.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Transaction>> PostTransaction(string from, string to, double amount)
+        public async Task<ActionResult<Transaction>> PostTransaction(string from, string to, double amount, string? comment)
         {
             
             // _context.Transactions.Add(transaction);
             // What is conflict.
+            if (!DoesBankAccountExist(from))
+            {
+                return NotFound();
+            }
             if(!DoesBankAccountExist(to)) {
-                return Conflict();
+                return NotFound();
             }
 
-            var sender = await _context.FindAsync(from);
-            var receiver = await _context.FindAsync(to);
+            var sender = await _context.BankAccounts.FindAsync(from);
+            var receiver = await _context.BankAccounts.FindAsync(to);
             
             var bal = sender.Balance;
             var min_bal = sender.MinBalance;
@@ -106,24 +110,26 @@ namespace OnlineBankingSystem.Api.Controllers
 
             _context.Entry(sender).State = EntityState.Modified;
             _context.Entry(receiver).State = EntityState.Modified;
+            Transaction transaction = new Transaction
+            {
+                Id = "1",
+                Amount = amount,
+                Timestamp = DateTime.UtcNow,
+                FromAccountId = from,
+                ToAccountId = to,
+                Comment = comment
+            };
 
             try
             {
                 sender.Balance -= amount;
                 receiver.Balance += amount;
-                // var transaction = await 
+                _context.Transactions.Add(transaction);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (TransactionExists(transaction.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
             return CreatedAtAction("GetTransaction", new { id = transaction.Id }, transaction);
