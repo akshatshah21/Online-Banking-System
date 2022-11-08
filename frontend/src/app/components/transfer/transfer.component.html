@@ -1,1 +1,27 @@
-<p>transfer works!</p>
+<form>
+    <h2>
+        <fa-icon [icon]="faMoneyBillTransfer"></fa-icon>
+        Transfer Money
+    </h2>
+    <div class="form-control">
+        <!-- // todo beneficiaries not working in html -->
+        <select name="to" [(ngModel)]="to" ng-options="x for x in beneficiaries" id="to" required>
+            <option value="" disabled selected hidden>Select a beneficiary</option>
+        </select>
+    </div>
+    <div class="form-control">
+        <label for="text">Amount</label>
+        <input type="text" name="amount" [(ngModel)]="amount" id="amount" placeholder="Add Amount" />
+    </div>
+    <app-button text="Confirm"></app-button>
+    <div class="form-control">
+        <label for="text">Pin</label>
+        <input type="text" name="pin" [(ngModel)]="pin" id="pin" placeholder="Enter pin" />
+    </div>
+    <input type="submit" value="Transfer" class="btn btn-block" />
+    <p>
+        {{amount}}
+        {{pin}}
+    </p>
+
+</form>

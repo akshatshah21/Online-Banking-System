@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { faMoneyBillTransfer } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-transfer',
@@ -6,6 +7,15 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./transfer.component.css']
 })
 export class TransferComponent implements OnInit {
+
+  faMoneyBillTransfer = faMoneyBillTransfer;
+  // todo beneficiaries not working in html
+  beneficiaries = ["abc", "xyz", "pqr"];
+
+  to: string;
+  amount: number;
+  pin: string;
+
 
   constructor() { }
 
