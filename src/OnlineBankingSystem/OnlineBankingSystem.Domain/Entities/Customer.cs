@@ -28,7 +28,7 @@ namespace OnlineBankingSystem.Domain.Entities
             CreatedAt = DateTime.Now;
             ModifiedAt = CreatedAt;
             BankAccounts = new List<BankAccount>();     // TODO
-            PersonalLoanApplications = new List<PersonalLoanApplication>():
+            PersonalLoanApplications = new List<PersonalLoanApplication>();
         }
 
         [Key]
