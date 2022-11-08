@@ -110,15 +110,7 @@ namespace OnlineBankingSystem.Api.Controllers
 
             _context.Entry(sender).State = EntityState.Modified;
             _context.Entry(receiver).State = EntityState.Modified;
-            Transaction transaction = new Transaction
-            {
-                Id = "1",
-                Amount = amount,
-                Timestamp = DateTime.UtcNow,
-                FromAccountId = from,
-                ToAccountId = to,
-                Comment = comment
-            };
+            Transaction transaction = new Transaction(amount, from, to, comment);
 
             try
             {

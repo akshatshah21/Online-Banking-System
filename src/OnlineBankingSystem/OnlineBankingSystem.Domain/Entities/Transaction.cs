@@ -10,15 +10,15 @@ namespace OnlineBankingSystem.Domain.Entities
 {
     public class Transaction
     {
-        public Transaction(double amount, DateTime timestamp, string? fromAccountId, string? toAccountId, string? comment)
+        public Transaction(double amount, string? fromAccountId, string? toAccountId, string? comment)
         {
             Amount = amount;
-            Timestamp = timestamp;
             FromAccountId = fromAccountId;
             ToAccountId = toAccountId;
             Comment = comment;
 
             Id = Guid.NewGuid().ToString();
+            Timestamp = DateTime.Now;
         }
 
         [Key]

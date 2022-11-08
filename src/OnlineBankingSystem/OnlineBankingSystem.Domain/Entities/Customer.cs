@@ -11,9 +11,8 @@ namespace OnlineBankingSystem.Domain.Entities
 {
     public class Customer
     {
-        public Customer(string password, string firstName, string lastName, string contactNumber, string emailAddress, string address, DateTime dateOfBirth, string ssn)
+        public Customer(string firstName, string lastName, string contactNumber, string emailAddress, string address, DateTime dateOfBirth, string ssn)
         {
-            Password = password;
             FirstName = firstName;
             LastName = lastName;
             ContactNumber = contactNumber;
