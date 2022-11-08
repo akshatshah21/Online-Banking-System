@@ -10,35 +10,42 @@ namespace OnlineBankingSystem.Domain.Entities
 {
     public class PersonalLoanApplication
     {
+        public PersonalLoanApplication(double amount, double interestRate, int term, string customerId, Customer customer)
+        {
+            Amount = amount;
+            InterestRate = interestRate;
+            Term = term;
+            CustomerId = customerId;
+            Customer = customer;
+
+            Id = Guid.NewGuid().ToString();
+            ApplicationDate = DateTime.Now;
+            status = PersonalLoanApplicationStatus.PENDING;
+        }
+
         [Key]
         public string Id { get; set; }
 
-        [Required]
         [Range(0, double.MaxValue)]
         public double Amount { get; set; }
 
-        [Required]
         [Range(0, double.MaxValue)]
         public double InterestRate { get; set; }
 
-        [Required]
         [Range(0, int.MaxValue)]
         public int Term { get; set; }
 
         // Foreign Key
-        [Required]
         public string CustomerId { get; set; }
         // Reference navigation property
         public Customer Customer { get; set; }
 
-        [Required]
         [DisplayFormat(DataFormatString = "0:{MM/dd/yyyy}")]
         public DateTime ApplicationDate { get; set; }
 
         [DisplayFormat(DataFormatString = "0:{MM/dd/yyyy}")]
         public DateTime ApprovalDate { get; set; }
 
-        [Required]
         public PersonalLoanApplicationStatus status { get; set; }
     }
 }
