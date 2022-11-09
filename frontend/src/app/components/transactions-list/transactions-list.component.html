@@ -1,0 +1,19 @@
+<h2>Statement of Transactions</h2>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Timestamp</th>
+        <th>Amount</th>
+        <th>Type</th>
+        <th>From/To</th>
+    </tr>
+
+    <tr *ngFor="let t of transactions">
+        <td>{{ t.id }}</td>
+        <td>{{ t.timestamp }}</td>
+        <td>{{ t.amount }}</td>
+        <td>{{ t.fromAccountNumber == bankAccountNumber ? "Debit" : "Credit" }}</td>
+        <td>{{ t.fromAccountNumber == bankAccountNumber ? t.toAccountNumber : t.fromAccountNumber }}</td>
+    </tr>
+</table>

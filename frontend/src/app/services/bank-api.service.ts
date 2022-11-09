@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import IBankAccount from "../interfaces/bank-account";
 import IBeneficiary from "../interfaces/beneficiary";
+import IHistoricalTransaction from "../interfaces/historical-transaction";
 import IInitiatedTransaction from "../interfaces/initiated-transaction";
 import ITransaction from "../interfaces/transaction";
 
@@ -25,6 +26,10 @@ export class BankApiService {
 
     initiateTransaction(transaction: IInitiatedTransaction): Observable<ITransaction> {
         return this.http.post<ITransaction>(`${this.bankApiBaseUrl}/transactions`, transaction);
+    }
+
+    getTransactionsOfAccount(accountNumber: string): Observable<IHistoricalTransaction[]> {
+        return this.http.get<IHistoricalTransaction[]>(`${this.bankApiBaseUrl}/bankAccounts/${accountNumber}/transactions`);
     }
 
 }

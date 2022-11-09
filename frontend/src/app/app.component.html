@@ -4,4 +4,5 @@
   <app-transfer bankAccountNumber="19cd1fc4-d235-4647-b5bb-aeae54df022a"
     (updateAccountDetails)="refreshAccountDetails()"></app-transfer>
   <app-beneficiary-list [bankAccountNumber]="bankAccount.accountNumber"></app-beneficiary-list>
+  <app-transactions-list [bankAccountNumber]="bankAccount.accountNumber"></app-transactions-list>
 </div>
