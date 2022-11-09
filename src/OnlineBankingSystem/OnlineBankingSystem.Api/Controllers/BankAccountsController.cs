@@ -127,7 +127,7 @@ namespace OnlineBankingSystem.Api.Controllers
             return NoContent();
         }
 
-        // POST: api/BankAccounts/5/AddBeneficiary
+        // POST: api/BankAccounts/5/AddBeneficiaryto selected account
         [HttpPost("{accountNumber}/add-beneficiary")]
         public async Task<IActionResult> AddBeneficiary(string accountNumber, [FromBody] BeneficiaryDto addBeneficiaryDto)
         {
@@ -175,6 +175,7 @@ namespace OnlineBankingSystem.Api.Controllers
             return Ok();
         }
 
+       // GET: api/BankAccounts/AllBeneficiaries
 
         [HttpGet("{accountNumber}/beneficiaries")]
         public async Task<ActionResult<IEnumerable<BeneficiaryDto>>> GetBeneficiaries(string accountNumber)
@@ -190,6 +191,8 @@ namespace OnlineBankingSystem.Api.Controllers
             IEnumerable<BankAccountDto> beneficiaries = _mapper.Map<IEnumerable<BankAccount>, IEnumerable<BankAccountDto>>(beneficiaryAccounts);
             return Ok(beneficiaries);
         }
+         
+        // DELETE: api/BankAccounts/5/Remove Beneficiary
 
         [HttpDelete("{accountNumber}/remove-beneficiary")]
         public async Task<IActionResult> DeleteBeneficiary(string accountNumber, [FromBody] BeneficiaryDto beneficiaryDto)
@@ -225,7 +228,7 @@ namespace OnlineBankingSystem.Api.Controllers
             return NoContent();
         }
 
-
+        
         private bool BankAccountExists(string id)
         {
             return _context.BankAccounts.Any(e => e.AccountNumber == id);
