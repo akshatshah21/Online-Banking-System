@@ -10,29 +10,37 @@ namespace OnlineBankingSystem.Domain.Entities
 {
     public class Transaction
     {
+        public Transaction(double amount, string? fromAccountNumber, string? toAccountNumber, string? comment)
+        {
+            Amount = amount;
+            FromAccountNumber = fromAccountNumber;
+            ToAccountNumber = toAccountNumber;
+            Comment = comment;
+
+            Id = Guid.NewGuid().ToString();
+            Timestamp = DateTime.Now;
+        }
+
         [Key]
         public string Id { get; set; }
 
-        [Required]
         [Range(0, double.MaxValue)]
         public double Amount { get; set; }
 
-        [Required]
         public DateTime Timestamp { get; set; }
 
         // Foreign Key
-        [Required]
-        public string FromAccountId { get; set; }
+        [ForeignKey("FromAccountNumber")]
+        public string? FromAccountNumber { get; set; }
         // Reference navigation property
-        public BankAccount FromAccount { get; set; }
-
+        public BankAccount? FromAccount { get; set; }
 
         // Foreign Key
-        [Required]
-        public string ToAccountId { get; set; }
+        [ForeignKey("ToAccountNumber")]
+        public string? ToAccountNumber { get; set; }
         // Reference navigation property
-        public BankAccount ToAccount { get; set; }
+        public BankAccount? ToAccount { get; set; }
 
-        public string Comment { get; set; }
+        public string? Comment { get; set; }
     }
 }

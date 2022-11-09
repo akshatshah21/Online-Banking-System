@@ -12,8 +12,8 @@ using OnlineBankingSystem.Persistence.Data;
 namespace OnlineBankingSystem.Persistence.Migrations
 {
     [DbContext(typeof(OnlineBankingSystemDbContext))]
-    [Migration("20221104141857_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20221108172002_v0")]
+    partial class v0
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,6 +24,21 @@ namespace OnlineBankingSystem.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("BankAccountBankAccount", b =>
+                {
+                    b.Property<string>("BeneficiariesAccountNumber")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("BeneficiaryOfAccountNumber")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("BeneficiariesAccountNumber", "BeneficiaryOfAccountNumber");
+
+                    b.HasIndex("BeneficiaryOfAccountNumber");
+
+                    b.ToTable("BankAccountBankAccount");
+                });
+
             modelBuilder.Entity("OnlineBankingSystem.Domain.Entities.BankAccount", b =>
                 {
                     b.Property<string>("AccountNumber")
@@ -31,9 +46,6 @@ namespace OnlineBankingSystem.Persistence.Migrations
 
                     b.Property<double>("Balance")
                         .HasColumnType("float");
-
-                    b.Property<string>("Beneficiary")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -56,8 +68,6 @@ namespace OnlineBankingSystem.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("AccountNumber");
-
-                    b.HasIndex("Beneficiary");
 
                     b.HasIndex("CustomerId");
 
@@ -158,18 +168,15 @@ namespace OnlineBankingSystem.Persistence.Migrations
                         .HasColumnType("float");
 
                     b.Property<string>("Comment")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FromAccountId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ToAccountId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -181,12 +188,23 @@ namespace OnlineBankingSystem.Persistence.Migrations
                     b.ToTable("Transactions");
                 });
 
-            modelBuilder.Entity("OnlineBankingSystem.Domain.Entities.BankAccount", b =>
+            modelBuilder.Entity("BankAccountBankAccount", b =>
                 {
                     b.HasOne("OnlineBankingSystem.Domain.Entities.BankAccount", null)
-                        .WithMany("Beneficiaries")
-                        .HasForeignKey("Beneficiary");
+                        .WithMany()
+                        .HasForeignKey("BeneficiariesAccountNumber")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
+                    b.HasOne("OnlineBankingSystem.Domain.Entities.BankAccount", null)
+                        .WithMany()
+                        .HasForeignKey("BeneficiaryOfAccountNumber")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("OnlineBankingSystem.Domain.Entities.BankAccount", b =>
+                {
                     b.HasOne("OnlineBankingSystem.Domain.Entities.Customer", "customer")
                         .WithMany("BankAccounts")
                         .HasForeignKey("CustomerId")
@@ -211,15 +229,11 @@ namespace OnlineBankingSystem.Persistence.Migrations
                 {
                     b.HasOne("OnlineBankingSystem.Domain.Entities.BankAccount", "FromAccount")
                         .WithMany("SentTransactions")
-                        .HasForeignKey("FromAccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("FromAccountId");
 
                     b.HasOne("OnlineBankingSystem.Domain.Entities.BankAccount", "ToAccount")
                         .WithMany("ReceivedTransactions")
-                        .HasForeignKey("ToAccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ToAccountId");
 
                     b.Navigation("FromAccount");
 
@@ -228,8 +242,6 @@ namespace OnlineBankingSystem.Persistence.Migrations
 
             modelBuilder.Entity("OnlineBankingSystem.Domain.Entities.BankAccount", b =>
                 {
-                    b.Navigation("Beneficiaries");
-
                     b.Navigation("ReceivedTransactions");
 
                     b.Navigation("SentTransactions");
