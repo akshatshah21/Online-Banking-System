@@ -2,6 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { faMoneyBillTransfer } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from 'rxjs';
 import IBeneficiary from 'src/app/interfaces/beneficiary';
+import IInitiatedTransaction from 'src/app/interfaces/initiated-transaction';
 import { BankApiService } from 'src/app/services/bank-api.service';
 
 @Component({
@@ -15,10 +16,13 @@ export class TransferComponent implements OnInit, OnDestroy {
   beneficiaries: IBeneficiary[];
   @Input() bankAccountNumber: string;
   sub: Subscription;
+  transactionSub: Subscription;
 
   to: string;
   amount: number;
-  pin: string;
+  transactionPin: string;
+  comment: string = "";
+  error: string | undefined;
 
 
   constructor(private bankApiService: BankApiService) { }
@@ -30,8 +34,33 @@ export class TransferComponent implements OnInit, OnDestroy {
     });
   }
 
+  onTransferSubmit(): void {
+    let transaction: IInitiatedTransaction = {
+      fromAccountNumber: this.bankAccountNumber,
+      toAccountNumber: this.to,
+      amount: this.amount,
+      comment: this.comment,
+      transactionPin: this.transactionPin
+    }
+
+    // TODO: Show successful txn in popup
+    this.transactionSub = this.bankApiService.initiateTransaction(transaction).subscribe({
+      next: transaction => console.log(transaction),
+      error: err => {
+        console.log(err);
+        this.error = err.error;
+      }
+    });
+
+    this.to = "";
+    this.amount = 0;
+    this.transactionPin = "";
+    this.comment = "";
+  }
+
   ngOnDestroy(): void {
     this.sub.unsubscribe();
+    this.transactionSub.unsubscribe();
   }
 
 }
