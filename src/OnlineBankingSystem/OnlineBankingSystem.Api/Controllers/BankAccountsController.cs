@@ -132,29 +132,38 @@ namespace OnlineBankingSystem.Api.Controllers
         public async Task<IActionResult> AddBeneficiary(string accountNumber, [FromBody] BeneficiaryDto addBeneficiaryDto)
         {
             var bankAccount = await _context.BankAccounts.FindAsync(accountNumber);
+
             if (bankAccount == null)
             {
                 return NotFound("Account does not exist");
             }
-            Console.WriteLine(addBeneficiaryDto.RoutingNumber);
+
+            var beneficiary = await _context.BankAccounts.FindAsync(addBeneficiaryDto.AccountNumber);
+
+            if (beneficiary == null)
+            {
+                return NotFound("Beneficiary account does not exist");
+            }
+
+            if (beneficiary.RoutingNumber != addBeneficiaryDto.RoutingNumber)
+            {
+                return NotFound("Beneficiary account does not exist");
+            }
+
+            await _context.Entry(bankAccount).Collection("Beneficiaries").LoadAsync();
             if (bankAccount.Beneficiaries.Any(b => b.AccountNumber == addBeneficiaryDto.AccountNumber))
             {
                 return BadRequest("Beneficiary already exists");
             }
 
-            var beneficiary = await _context.BankAccounts.FindAsync(addBeneficiaryDto.AccountNumber);
-            if (beneficiary == null)
-            {
-                return NotFound("Beneficiary account does not exist");
-            }
-            if (beneficiary.RoutingNumber != addBeneficiaryDto.RoutingNumber)
-            {
-                return NotFound("Beneficiary account does not exist");
-            }
+            await _context.Entry(beneficiary).Collection("BeneficiaryOf").LoadAsync();
+
             bankAccount.Beneficiaries.Add(beneficiary);
             beneficiary.BeneficiaryOf.Add(bankAccount);
+
             _context.Entry(bankAccount).State = EntityState.Modified;
             _context.Entry(beneficiary).State = EntityState.Modified;
+
             try
             {
                 await _context.SaveChangesAsync();
@@ -176,9 +185,44 @@ namespace OnlineBankingSystem.Api.Controllers
                 return NotFound();
             }
 
+            await _context.Entry(bankAccount).Collection("Beneficiaries").LoadAsync();
             IEnumerable<BankAccount> beneficiaryAccounts = bankAccount.Beneficiaries;
             IEnumerable<BankAccountDto> beneficiaries = _mapper.Map<IEnumerable<BankAccount>, IEnumerable<BankAccountDto>>(beneficiaryAccounts);
             return Ok(beneficiaries);
+        }
+
+        [HttpDelete("{accountNumber}/remove-beneficiary")]
+        public async Task<IActionResult> DeleteBeneficiary(string accountNumber, [FromBody] BeneficiaryDto beneficiaryDto)
+        {
+            var bankAccount = await _context.BankAccounts.FindAsync(accountNumber);
+            if (bankAccount == null)
+            {
+                return NotFound();
+            }
+
+            await _context.Entry(bankAccount).Collection("Beneficiaries").LoadAsync();
+
+            var beneficiary = bankAccount.Beneficiaries.FindLast(b => b.AccountNumber == beneficiaryDto.AccountNumber && b.RoutingNumber == beneficiaryDto.RoutingNumber);
+            if (beneficiary == null)
+            {
+                return NotFound("This account is not a beneficiary of requestor account");
+            }
+
+            await _context.Entry(beneficiary).Collection("BeneficiaryOf").LoadAsync();
+
+            beneficiary.BeneficiaryOf.Remove(bankAccount);
+            bankAccount.Beneficiaries.Remove(beneficiary);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                throw;
+            }
+
+            return NoContent();
         }
 
 
