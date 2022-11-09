@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace OnlineBankingSystem.Persistence.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class v0 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -41,17 +41,11 @@ namespace OnlineBankingSystem.Persistence.Migrations
                     InterestRate = table.Column<double>(type: "float", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
-                    RoutingNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Beneficiary = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    RoutingNumber = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BankAccounts", x => x.AccountNumber);
-                    table.ForeignKey(
-                        name: "FK_BankAccounts_BankAccounts_Beneficiary",
-                        column: x => x.Beneficiary,
-                        principalTable: "BankAccounts",
-                        principalColumn: "AccountNumber");
                     table.ForeignKey(
                         name: "FK_BankAccounts_Customers_CustomerId",
                         column: x => x.CustomerId,
@@ -85,15 +79,38 @@ namespace OnlineBankingSystem.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "BankAccountBankAccount",
+                columns: table => new
+                {
+                    BeneficiariesAccountNumber = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    BeneficiaryOfAccountNumber = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BankAccountBankAccount", x => new { x.BeneficiariesAccountNumber, x.BeneficiaryOfAccountNumber });
+                    table.ForeignKey(
+                        name: "FK_BankAccountBankAccount_BankAccounts_BeneficiariesAccountNumber",
+                        column: x => x.BeneficiariesAccountNumber,
+                        principalTable: "BankAccounts",
+                        principalColumn: "AccountNumber",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BankAccountBankAccount_BankAccounts_BeneficiaryOfAccountNumber",
+                        column: x => x.BeneficiaryOfAccountNumber,
+                        principalTable: "BankAccounts",
+                        principalColumn: "AccountNumber");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Transactions",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Amount = table.Column<double>(type: "float", nullable: false),
                     Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FromAccountId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ToAccountId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    FromAccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ToAccountId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -102,20 +119,18 @@ namespace OnlineBankingSystem.Persistence.Migrations
                         name: "FK_Transactions_BankAccounts_FromAccountId",
                         column: x => x.FromAccountId,
                         principalTable: "BankAccounts",
-                        principalColumn: "AccountNumber",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "AccountNumber");
                     table.ForeignKey(
                         name: "FK_Transactions_BankAccounts_ToAccountId",
                         column: x => x.ToAccountId,
                         principalTable: "BankAccounts",
-                        principalColumn: "AccountNumber",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "AccountNumber");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_BankAccounts_Beneficiary",
-                table: "BankAccounts",
-                column: "Beneficiary");
+                name: "IX_BankAccountBankAccount_BeneficiaryOfAccountNumber",
+                table: "BankAccountBankAccount",
+                column: "BeneficiaryOfAccountNumber");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BankAccounts_CustomerId",
@@ -140,6 +155,9 @@ namespace OnlineBankingSystem.Persistence.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "BankAccountBankAccount");
+
             migrationBuilder.DropTable(
                 name: "PersonalLoanApplications");
 

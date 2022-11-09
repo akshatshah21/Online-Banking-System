@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineBankingSystem.Persistence.Data;
 
@@ -11,9 +12,10 @@ using OnlineBankingSystem.Persistence.Data;
 namespace OnlineBankingSystem.Persistence.Migrations
 {
     [DbContext(typeof(OnlineBankingSystemDbContext))]
-    partial class OnlineBankingSystemDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221109083534_v2")]
+    partial class v2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,11 +63,6 @@ namespace OnlineBankingSystem.Persistence.Migrations
                     b.Property<string>("RoutingNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TransactionPin")
-                        .IsRequired()
-                        .HasMaxLength(4)
-                        .HasColumnType("nvarchar(4)");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
