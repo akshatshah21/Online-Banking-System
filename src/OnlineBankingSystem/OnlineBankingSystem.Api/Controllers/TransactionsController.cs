@@ -53,42 +53,46 @@ namespace OnlineBankingSystem.Api.Controllers
         // POST: api/Transactions
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Transaction>> PostTransaction([FromBody] TransactionDto transactionDto)
+        public async Task<ActionResult<Transaction>> PostTransaction([FromBody] InitiateTransactionDto initiateTransactionDto)
         {
-            if (!DoesBankAccountExist(transactionDto.FromAccountNumber))
+            if (!DoesBankAccountExist(initiateTransactionDto.FromAccountNumber))
             {
                 return NotFound("Sender account not found");
             }
-            if(!DoesBankAccountExist(transactionDto.ToAccountNumber)) {
+            if(!DoesBankAccountExist(initiateTransactionDto.ToAccountNumber)) {
                 return NotFound("Receiver account not found");
             }
 
-            var sender = await _context.BankAccounts.FindAsync(transactionDto.FromAccountNumber);
+            var sender = await _context.BankAccounts.FindAsync(initiateTransactionDto.FromAccountNumber);
+            if (sender.TransactionPin != initiateTransactionDto.TransactionPin)
+            {
+                return Unauthorized("Incorrect transaction PIN");
+            }
             
-            if(transactionDto.Amount < 0) {
+            if(initiateTransactionDto.Amount < 0) {
                 return Conflict("Amount can't be negative");
             }
 
-            if(sender.Balance - transactionDto.Amount < sender.MinBalance) {
+            if(sender.Balance - initiateTransactionDto.Amount < sender.MinBalance) {
                 return Conflict("Minimum balance requirement not met");
             }
 
             await _context.Entry(sender).Collection("Beneficiaries").LoadAsync();
 
-            if (!sender.Beneficiaries.Any(b => b.AccountNumber == transactionDto.ToAccountNumber))
+            if (!sender.Beneficiaries.Any(b => b.AccountNumber == initiateTransactionDto.ToAccountNumber))
             {
                 return Conflict("Receiver account is not a beneficiary of sender account");
             }
-            var receiver = await _context.BankAccounts.FindAsync(transactionDto.ToAccountNumber);
+            var receiver = await _context.BankAccounts.FindAsync(initiateTransactionDto.ToAccountNumber);
 
-            sender.Balance -= transactionDto.Amount;
-            receiver.Balance += transactionDto.Amount;
+            sender.Balance -= initiateTransactionDto.Amount;
+            receiver.Balance += initiateTransactionDto.Amount;
 
 
             _context.Entry(sender).State = EntityState.Modified;
             _context.Entry(receiver).State = EntityState.Modified;
 
-            Transaction transaction = _mapper.Map<Transaction>(transactionDto);
+            Transaction transaction = _mapper.Map<TransactionDto, Transaction>(initiateTransactionDto);
             _context.Transactions.Add(transaction);
 
             await _context.Entry(sender).Collection("SentTransactions").LoadAsync();

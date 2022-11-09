@@ -108,7 +108,7 @@ namespace OnlineBankingSystem.Api.Controllers
                 }
             }
 
-            return CreatedAtAction("GetBankAccount", new { id = bankAccount.AccountNumber }, _mapper.Map<BankAccount, BankAccountDto>(bankAccount));
+            return CreatedAtAction("GetBankAccount", new { id = bankAccount.AccountNumber }, _mapper.Map<BankAccount, NewBankAccountDto>(bankAccount));
         }
 
         // DELETE: api/BankAccounts/5

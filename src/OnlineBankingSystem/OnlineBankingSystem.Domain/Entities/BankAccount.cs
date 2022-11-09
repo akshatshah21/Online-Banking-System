@@ -22,6 +22,7 @@ namespace OnlineBankingSystem.Domain.Entities
             ReceivedTransactions = new List<Transaction>();
             Beneficiaries = new List<BankAccount>();
             BeneficiaryOf = new List<BankAccount>();
+            TransactionPin = generateTransactionPin();
         }
 
         [Key]
@@ -44,6 +45,9 @@ namespace OnlineBankingSystem.Domain.Entities
 
         public string RoutingNumber { get; set; }
 
+        [StringLength(4, MinimumLength = 4)]
+        public string TransactionPin { get; set; }
+
         [InverseProperty("FromAccount")]
         public List<Transaction> SentTransactions { get; set; }
 
@@ -53,5 +57,17 @@ namespace OnlineBankingSystem.Domain.Entities
         public List<BankAccount> Beneficiaries { get; set; }
 
         public List<BankAccount> BeneficiaryOf { get; set; }
+
+        private string generateTransactionPin()
+        {
+            string pin = "";
+            for (int i = 0; i < 4; i++)
+            {
+                Random random = new Random();
+                int digit = random.Next(0, 9);
+                pin += digit.ToString();
+            }
+            return pin;
+        }
     }
 }
