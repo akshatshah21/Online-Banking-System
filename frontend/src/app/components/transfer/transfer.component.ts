@@ -10,11 +10,11 @@ export class TransferComponent implements OnInit {
 
   faMoneyBillTransfer = faMoneyBillTransfer;
   // todo beneficiaries not working in html
-  beneficiaries = ["abc", "xyz", "pqr"];
+  beneficiaries: string[] = ["abc", "xyz", "pqr"];
 
-  to: string;
-  amount: number;
-  pin: string;
+  to: string = this.beneficiaries[0];
+  amount: number = 0;
+  pin: string = "";
 
 
   constructor() { }
