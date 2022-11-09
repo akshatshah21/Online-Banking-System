@@ -15,7 +15,7 @@ export class TransferComponent implements OnInit, OnDestroy {
   beneficiaries: IBeneficiary[];
   @Input() bankAccountNumber: string;
   sub: Subscription;
-  to: string = this.beneficiaries[0];
+  to: string;
   amount: number = 0;
   pin: string = "";
 
