@@ -1,5 +1,5 @@
-<h2>Account Number: {{bankAccountNumber}}</h2>
 <div class="" *ngIf="bankAccount">
+    <h2>Account Number: {{ bankAccount.accountNumber }}</h2>
     <p>Customer ID: {{ bankAccount.customerId }}</p>
     <p>Type: {{ bankAccount.type }}</p>
     <p>Routing Number: {{ bankAccount.routingNumber }}</p>

@@ -9,22 +9,6 @@ import { BankApiService } from 'src/app/services/bank-api.service';
   templateUrl: './account-details.component.html',
   styleUrls: ['./account-details.component.css']
 })
-export class AccountDetailsComponent implements OnInit, OnDestroy {
-
-  @Input() bankAccountNumber: string;
-  bankAccount: IBankAccount | null = null;
-  sub: Subscription;
-
-  constructor(private bankApiService: BankApiService) { }
-
-  ngOnInit(): void {
-    this.sub = this.bankApiService.getBankAccount(this.bankAccountNumber).subscribe({
-      next: bankAccount => this.bankAccount = bankAccount,
-      error: err => console.log(err)
-    });
-  }
-
-  ngOnDestroy(): void {
-    this.sub.unsubscribe();
-  }
+export class AccountDetailsComponent {
+  @Input() bankAccount: IBankAccount;
 }

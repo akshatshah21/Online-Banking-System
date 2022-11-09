@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
 import { faMoneyBillTransfer } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from 'rxjs';
 import IBeneficiary from 'src/app/interfaces/beneficiary';
@@ -24,6 +24,7 @@ export class TransferComponent implements OnInit, OnDestroy {
   comment: string = "";
   error: string | undefined;
 
+  @Output() updateAccountDetails: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(private bankApiService: BankApiService) { }
 
@@ -43,9 +44,12 @@ export class TransferComponent implements OnInit, OnDestroy {
       transactionPin: this.transactionPin
     }
 
-    // TODO: Show successful txn in popup
     this.transactionSub = this.bankApiService.initiateTransaction(transaction).subscribe({
-      next: transaction => console.log(transaction),
+      next: transaction => {
+        console.log(transaction);
+        // TODO: Show successful txn in popup
+        this.updateAccountDetails.emit();
+      },
       error: err => {
         console.log(err);
         this.error = err.error;
