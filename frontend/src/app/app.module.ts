@@ -11,6 +11,7 @@ import { AccountDetailsComponent } from './components/account-details/account-de
 import { ViewBalanceComponent } from './components/view-balance/view-balance.component';
 import { TransferComponent } from './components/transfer/transfer.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { AddBeneficiaryComponent } from './components/add-beneficiary/add-beneficiary.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     ButtonComponent,
     AccountDetailsComponent,
     ViewBalanceComponent,
-    TransferComponent
+    TransferComponent,
+    AddBeneficiaryComponent
   ],
   imports: [
     BrowserModule,

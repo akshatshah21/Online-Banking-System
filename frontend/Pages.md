@@ -8,9 +8,9 @@
 - Beneficiaries
     - Show beneficiary list
     - Add Beneficiary
-- Add Beneficiary
+<!-- - Add Beneficiary
     - Form
-- Transfer Money
+- Transfer Money -->
 
 - Header:
     - Title and Home button 
