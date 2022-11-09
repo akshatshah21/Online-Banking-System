@@ -5,8 +5,9 @@
     </h2>
     <div class="form-control">
         <!-- // todo beneficiaries not working in html -->
-        <select name="to" [(ngModel)]="to" ng-options="x for x in beneficiaries" id="to" required>
-            <option value="" disabled selected hidden>Select a beneficiary</option>
+        <select name="to" [(ngModel)]="to" id="to" required>
+            <option *ngFor="let b of beneficiaries" [value]="b.accountNumber">{{
+                b.accountNumber }}</option>
         </select>
     </div>
     <div class="form-control">

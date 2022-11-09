@@ -187,7 +187,7 @@ namespace OnlineBankingSystem.Api.Controllers
 
             await _context.Entry(bankAccount).Collection("Beneficiaries").LoadAsync();
             IEnumerable<BankAccount> beneficiaryAccounts = bankAccount.Beneficiaries;
-            IEnumerable<BankAccountDto> beneficiaries = _mapper.Map<IEnumerable<BankAccount>, IEnumerable<BankAccountDto>>(beneficiaryAccounts);
+            IEnumerable<BeneficiaryDto> beneficiaries = _mapper.Map<IEnumerable<BankAccount>, IEnumerable<BeneficiaryDto>>(beneficiaryAccounts);
             return Ok(beneficiaries);
         }
 

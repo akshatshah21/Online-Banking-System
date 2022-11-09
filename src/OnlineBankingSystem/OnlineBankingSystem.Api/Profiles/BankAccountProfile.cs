@@ -16,6 +16,9 @@ namespace OnlineBankingSystem.Api.Profiles
                     .ForMember(b => b.AccountNumber, op => op.Ignore())
                     .ForMember(b => b.CreatedAt, op => op.Ignore())
                     .ForMember(b => b.Type, op => op.MapFrom(src => getAccountTypeEnum(src.Type)));
+
+            CreateMap<BankAccount, BeneficiaryDto>();
+
         }
 
         private string getAccountTypeString(BankAccountType type) => type switch
