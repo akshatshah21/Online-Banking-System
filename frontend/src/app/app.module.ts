@@ -10,6 +10,7 @@ import { ButtonComponent } from './components/button/button.component';
 import { AccountDetailsComponent } from './components/account-details/account-details.component';
 import { TransferComponent } from './components/transfer/transfer.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { BeneficiaryListComponent } from './components/beneficiary-list/beneficiary-list.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     ButtonComponent,
     AccountDetailsComponent,
     TransferComponent,
+    BeneficiaryListComponent,
   ],
   imports: [
     BrowserModule,

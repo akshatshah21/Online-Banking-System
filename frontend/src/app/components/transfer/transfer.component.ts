@@ -66,5 +66,4 @@ export class TransferComponent implements OnInit, OnDestroy {
     this.sub.unsubscribe();
     this.transactionSub.unsubscribe();
   }
-
 }
