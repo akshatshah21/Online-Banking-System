@@ -4,6 +4,8 @@ import { HomComponent } from './hom/hom.component';
 import { LoginComponent } from './login/login.component';
 import { BeneficiaryComponent } from './beneficiary/beneficiary.component';
 import { HelComponent } from './hel/hel.component';
+import { BeneManageComponent } from './bene-manage/bene-manage.component';
+import { BeneNewComponent } from './bene-new/bene-new.component';
 
 const routes: Routes = [
   {
@@ -17,6 +19,14 @@ const routes: Routes = [
   {
     path:'help',
     component:HelComponent
+  },
+  {
+    path:'bene-new',
+    component:BeneNewComponent
+  },
+  {
+    path:'bene-manage',
+    component:BeneManageComponent
   },
   {
     path:'',

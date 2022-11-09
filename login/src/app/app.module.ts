@@ -11,13 +11,17 @@ import { LoginComponent } from './login/login.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BeneficiaryComponent } from './beneficiary/beneficiary.component';
 import { HelComponent } from './hel/hel.component';
+import { BeneNewComponent } from './bene-new/bene-new.component';
+import { BeneManageComponent } from './bene-manage/bene-manage.component';
 @NgModule({
   declarations: [
     AppComponent,
     HomComponent,
     LoginComponent,
     BeneficiaryComponent,
-    HelComponent
+    HelComponent,
+    BeneNewComponent,
+    BeneManageComponent
   ],
   imports: [
     BrowserModule,
