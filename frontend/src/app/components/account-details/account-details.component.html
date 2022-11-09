@@ -1,2 +1,7 @@
-<p>account-details works!</p>
-<app-view-balance></app-view-balance>
+<h2>Account Number: {{bankAccountNumber}}</h2>
+<div class="" *ngIf="bankAccount">
+    <p>Customer ID: {{ bankAccount.customerId }}</p>
+    <p>Type: {{ bankAccount.type }}</p>
+    <p>Routing Number: {{ bankAccount.routingNumber }}</p>
+    <p>Balance: {{ bankAccount.balance }}</p>
+</div>

@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -8,7 +8,6 @@ import { AppComponent } from './app.component';
 import { HeaderComponent } from './components/header/header.component';
 import { ButtonComponent } from './components/button/button.component';
 import { AccountDetailsComponent } from './components/account-details/account-details.component';
-import { ViewBalanceComponent } from './components/view-balance/view-balance.component';
 import { TransferComponent } from './components/transfer/transfer.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AddBeneficiaryComponent } from './components/add-beneficiary/add-beneficiary.component';
@@ -19,7 +18,7 @@ import { AddBeneficiaryComponent } from './components/add-beneficiary/add-benefi
     HeaderComponent,
     ButtonComponent,
     AccountDetailsComponent,
-    ViewBalanceComponent,
+    // ViewBalanceComponent,
     TransferComponent,
     AddBeneficiaryComponent
   ],
@@ -27,7 +26,8 @@ import { AddBeneficiaryComponent } from './components/add-beneficiary/add-benefi
     BrowserModule,
     AppRoutingModule,
     FontAwesomeModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
