@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol.Plugins;
 using OnlineBankingSystem.Domain.Entities;
+using OnlineBankingSystem.Domain.Models;
 using OnlineBankingSystem.Persistence.Data;
 
 namespace OnlineBankingSystem.Api.Controllers
@@ -15,22 +20,25 @@ namespace OnlineBankingSystem.Api.Controllers
     public class TransactionsController : ControllerBase
     {
         private readonly OnlineBankingSystemDbContext _context;
+        private readonly IMapper _mapper;
 
-        public TransactionsController(OnlineBankingSystemDbContext context)
+        public TransactionsController(OnlineBankingSystemDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Transactions
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Transaction>>> GetTransactions()
+        public async Task<ActionResult<IEnumerable<TransactionDto>>> GetTransactions()
         {
-            return await _context.Transactions.ToListAsync();
+            IEnumerable<Transaction> transactions = await _context.Transactions.ToListAsync();
+            return Ok(_mapper.Map<IEnumerable<Transaction>, IEnumerable<TransactionDto>>(transactions));
         }
 
         // GET: api/Transactions/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Transaction>> GetTransaction(string id)
+        public async Task<ActionResult<TransactionDto>> GetTransaction(string id)
         {
             var transaction = await _context.Transactions.FindAsync(id);
 
@@ -39,84 +47,58 @@ namespace OnlineBankingSystem.Api.Controllers
                 return NotFound();
             }
 
-            return transaction;
+            return _mapper.Map<TransactionDto>(transaction);
         }
-
-        // PUT: api/Transactions/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        // [HttpPut("{id}")]
-        // public async Task<IActionResult> PutTransaction(string id, Transaction transaction)
-        // {
-        //     if (id != transaction.Id)
-        //     {
-        //         return BadRequest();
-        //     }
-
-        //     _context.Entry(transaction).State = EntityState.Modified;
-
-        //     try
-        //     {
-        //         await _context.SaveChangesAsync();
-        //     }
-        //     catch (DbUpdateConcurrencyException)
-        //     {
-        //         if (!TransactionExists(id))
-        //         {
-        //             return NotFound();
-        //         }
-        //         else
-        //         {
-        //             throw;
-        //         }
-        //     }
-
-        //     return NoContent();
-        // }
 
         // POST: api/Transactions
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-
-        private bool DoesBankAccountExist(string id)
-        {
-            return _context.BankAccounts.Any(e => e.AccountNumber == id);
-        }
-
         [HttpPost]
-        public async Task<ActionResult<Transaction>> PostTransaction(string from, string to, double amount, string? comment)
+        public async Task<ActionResult<Transaction>> PostTransaction([FromBody] TransactionDto transactionDto)
         {
-            
-            // _context.Transactions.Add(transaction);
-            // What is conflict.
-            if (!DoesBankAccountExist(from))
+            if (!DoesBankAccountExist(transactionDto.FromAccountNumber))
             {
-                return NotFound();
+                return NotFound("Sender account not found");
             }
-            if(!DoesBankAccountExist(to)) {
-                return NotFound();
+            if(!DoesBankAccountExist(transactionDto.ToAccountNumber)) {
+                return NotFound("Receiver account not found");
             }
 
-            var sender = await _context.BankAccounts.FindAsync(from);
-            var receiver = await _context.BankAccounts.FindAsync(to);
+            var sender = await _context.BankAccounts.FindAsync(transactionDto.FromAccountNumber);
             
-            var bal = sender.Balance;
-            var min_bal = sender.MinBalance;
-            if(amount < 0) {
+            if(transactionDto.Amount < 0) {
                 return Conflict("Amount can't be negative");
             }
 
-            if(bal - amount < min_bal) {
-                return Conflict("Min_balance requirement not met.");
+            if(sender.Balance - transactionDto.Amount < sender.MinBalance) {
+                return Conflict("Minimum balance requirement not met");
             }
+
+            await _context.Entry(sender).Collection("Beneficiaries").LoadAsync();
+
+            if (!sender.Beneficiaries.Any(b => b.AccountNumber == transactionDto.ToAccountNumber))
+            {
+                return Conflict("Receiver account is not a beneficiary of sender account");
+            }
+            var receiver = await _context.BankAccounts.FindAsync(transactionDto.ToAccountNumber);
+
+            sender.Balance -= transactionDto.Amount;
+            receiver.Balance += transactionDto.Amount;
+
 
             _context.Entry(sender).State = EntityState.Modified;
             _context.Entry(receiver).State = EntityState.Modified;
-            Transaction transaction = new Transaction(amount, from, to, comment);
+
+            Transaction transaction = _mapper.Map<Transaction>(transactionDto);
+            _context.Transactions.Add(transaction);
+
+            await _context.Entry(sender).Collection("SentTransactions").LoadAsync();
+            sender.SentTransactions.Add(transaction);
+
+            await _context.Entry(receiver).Collection("ReceivedTransactions").LoadAsync();
+            receiver.ReceivedTransactions.Add(transaction);
 
             try
             {
-                sender.Balance -= amount;
-                receiver.Balance += amount;
-                _context.Transactions.Add(transaction);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
@@ -124,28 +106,17 @@ namespace OnlineBankingSystem.Api.Controllers
                 throw;
             }
 
-            return CreatedAtAction("GetTransaction", new { id = transaction.Id }, transaction);
-        }
-
-        // DELETE: api/Transactions/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTransaction(string id)
-        {
-            var transaction = await _context.Transactions.FindAsync(id);
-            if (transaction == null)
-            {
-                return NotFound();
-            }
-
-            _context.Transactions.Remove(transaction);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return CreatedAtAction("GetTransaction", new { id = transaction.Id }, _mapper.Map<TransactionDto>(transaction));
         }
 
         private bool TransactionExists(string id)
         {
             return _context.Transactions.Any(e => e.Id == id);
+        }
+
+        private bool DoesBankAccountExist(string id)
+        {
+            return _context.BankAccounts.Any(e => e.AccountNumber == id);
         }
     }
 }

@@ -226,6 +226,24 @@ namespace OnlineBankingSystem.Api.Controllers
         }
 
 
+        // GET all transactions of an account
+        [HttpGet("{accountNumber}/transactions")]
+        public async Task<ActionResult<IEnumerable<TransactionDto>>> GetTransactionsOfAccount(string accountNumber)
+        {
+            var bankAccount = await _context.BankAccounts.FindAsync(accountNumber);
+            if (bankAccount == null)
+            {
+                return NotFound();
+            }
+
+            await _context.Entry(bankAccount).Collection("SentTransactions").LoadAsync();
+            await _context.Entry(bankAccount).Collection("ReceivedTransactions").LoadAsync();
+
+            IEnumerable<Transaction> transactions = bankAccount.SentTransactions.Concat(bankAccount.ReceivedTransactions).OrderByDescending(t => t.Timestamp);
+            return Ok(_mapper.Map<IEnumerable<Transaction>, IEnumerable<TransactionDto>>(transactions));
+        }
+
+
         private bool BankAccountExists(string id)
         {
             return _context.BankAccounts.Any(e => e.AccountNumber == id);
