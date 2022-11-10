@@ -1,8 +1,1 @@
-<div class="container">
-  <app-header></app-header>
-  <app-login></app-login>
-  <app-account-details *ngIf="bankAccount" [bankAccount]="bankAccount"></app-account-details>
-  <app-transfer bankAccountNumber="19cd1fc4-d235-4647-b5bb-aeae54df022a"
-    (updateAccountDetails)="refreshAccountDetails()"></app-transfer>
-  <app-beneficiary-list [bankAccountNumber]="bankAccount.accountNumber"></app-beneficiary-list>
-</div>
+<router-outlet></router-outlet>

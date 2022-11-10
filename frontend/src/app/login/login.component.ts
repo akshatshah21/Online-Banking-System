@@ -27,7 +27,6 @@ export class LoginComponent implements OnInit {
     if(!this.loginForm.valid){
       return;
     }
-    // localStorage.setItem('user',this.loginForm.value)
     this.router.navigate(['/home'])
   }
 }
