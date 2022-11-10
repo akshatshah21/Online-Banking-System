@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-hel',
@@ -7,9 +8,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HelComponent implements OnInit {
 
-  constructor() { }
+  public isCollapsed = true;
+
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
   }
+
+  collapse() {
+    this.isCollapsed = true;
+  }
+
+  toggle() {
+    this.isCollapsed = !this.isCollapsed;
+}
 
 }

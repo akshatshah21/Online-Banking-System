@@ -1,1 +1,57 @@
-<p>hel works!</p>
+<header>
+    <nav class="navbar navbar-expand navbar-toggleable-sm navbar-dark bg-dark" >
+        <div class="container">
+
+            <button class="navbar-toggler"
+                    type="button"
+                    data-toggle="collapse"
+                    data-target=".navbar-collapse"
+                    aria-label="Toggle navigation"
+                    [attr.aria-expanded]="isCollapsed"
+                    (click)="toggle()">
+
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse"
+                 [ngClass]="{ show: isCollapsed }">
+
+                <ul class="navbar-nav flex-grow">
+
+                    <li class="nav-item"
+                           [routerLinkActive]="['link-active']"
+                        [routerLinkActiveOptions]="{ exact: true }">
+                    </li>
+
+                    <li>
+                        <a class="nav-item nav-link" routerLink="/home">Home</a>
+                    </li>
+                    <li>
+                        <a class="nav-item nav-link" routerLink="/">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <h3>
+        Welcome user! 
+    </h3>
+    <h4>
+        Help 
+    </h4>
+    <p>
+        The home page gives an overview of the account and displays the balance present. <br> 
+        The Statement page gives you all the transactions that had been made through your account. <br>
+        The make transactions page enables transferring money to your Beneficiaries. <br>
+        The manage beneficiaries page allows you to make changes to your existing beneficiaries and also allows you to add new Beneficiaries. <br>
+        The Logout button logs you out of the session and takes you back to the login page. 
+    </p>
+    <style>
+        h3 {text-align: center;}
+        h3 {height: 60px ;}
+        h4 {text-align:center;}
+        h4 {height: 60px ;}
+        p {text-align: justify;}
+    </style>
+    
+</header>
