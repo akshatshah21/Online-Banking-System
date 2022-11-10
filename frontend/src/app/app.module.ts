@@ -21,7 +21,7 @@ import { HelComponent } from './hel/hel.component';
 import { BeneNewComponent } from './bene-new/bene-new.component';
 import { BeneManageComponent } from './bene-manage/bene-manage.component';
 // import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
+import { TransactionsListComponent } from './components/transactions-list/transactions-list.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +37,8 @@ import { BeneManageComponent } from './bene-manage/bene-manage.component';
     BeneficiaryComponent,
     BeneNewComponent,
     BeneManageComponent,
-    HelComponent
+    HelComponent,
+    TransactionsListComponent,
   ],
   imports: [
     BrowserModule,
