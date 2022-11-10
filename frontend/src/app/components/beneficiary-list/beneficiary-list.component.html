@@ -1,0 +1,11 @@
+<h2>Beneficiaries</h2>
+<table border="1">
+    <tr>
+        <th>Beneficiary Account Number</th>
+        <th>Routing Number</th>
+    </tr>
+    <tr *ngFor="let b of beneficiaries">
+        <td>{{ b.accountNumber }}</td>
+        <td>{{ b.routingNumber }}</td>
+    </tr>
+</table>

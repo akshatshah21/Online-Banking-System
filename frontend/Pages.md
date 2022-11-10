@@ -1,0 +1,16 @@
+- Login
+- Register
+- Account Home page
+    - Account details
+    - View Balance
+    - Beneficiaries
+    - Transfer Money
+- Beneficiaries
+    - Show beneficiary list
+    - Add Beneficiary
+- Add Beneficiary
+    - Form
+- Transfer Money
+
+- Header:
+    - Title and Home button 

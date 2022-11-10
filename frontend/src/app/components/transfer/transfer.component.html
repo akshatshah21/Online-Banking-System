@@ -1,0 +1,30 @@
+<form (submit)="onTransferSubmit()">
+    <h2>
+        <fa-icon [icon]="faMoneyBillTransfer"></fa-icon>
+        Transfer Money
+    </h2>
+    <div class="form-control">
+        <select name="to" [(ngModel)]="to" id="to" required>
+            <option *ngFor="let b of beneficiaries" [value]="b.accountNumber">{{
+                b.accountNumber }}</option>
+        </select>
+    </div>
+    <div class="form-control">
+        <label for="amount">Amount</label>
+        <input type="number" name="amount" [(ngModel)]="amount" id="amount" placeholder="Add Amount" min="0" />
+    </div>
+    <div class="form-control">
+        <label for="comment">Comment</label>
+        <input type="text" name="comment" [(ngModel)]="comment" id="comment" placeholder="Add Comment" />
+    </div>
+    <!-- <app-button text="Confirm"></app-button> -->
+    <div class="form-control">
+        <label for="transactionPin">Pin</label>
+        <input type="text" name="transactionPin" [(ngModel)]="transactionPin" id="transactionPin"
+            placeholder="Enter transaction pin" />
+    </div>
+    <input type="submit" class="btn btn-block" />
+
+    <p *ngIf="error">Error occured: {{ error }}</p>
+
+</form>
