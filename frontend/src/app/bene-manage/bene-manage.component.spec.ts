@@ -8,9 +8,9 @@ describe('BeneManageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ BeneManageComponent ]
+      declarations: [BeneManageComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(BeneManageComponent);
     component = fixture.componentInstance;

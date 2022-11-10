@@ -1,1 +1,19 @@
-<p>bene-new works!</p>
+<form>
+    <h2>
+        Add Beneficiary
+    </h2>
+    <div class="form-control">
+        <label for="text">Nickname</label>
+        <input type="text" name="nickname" [(ngModel)]="nickname" id="nickname" placeholder="Give a nickname" />
+    </div>
+    <div class="form-control">
+        <label for="text">Account Number</label>
+        <input type="text" name="acc_number" [(ngModel)]="acc_number" id="acc_number" placeholder="Account Number" />
+    </div>
+    <div class="form-control">
+        <label for="text">Re-enter Account Number</label>
+        <input type="text" name="re_acc_number" [(ngModel)]="re_acc_number" id="re_acc_number"
+            placeholder="Re-enter Account Number" />
+    </div>
+    <input type="submit" value="Add" class="btn btn-block" />
+</form>

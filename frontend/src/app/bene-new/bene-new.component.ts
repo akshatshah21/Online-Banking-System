@@ -7,6 +7,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class BeneNewComponent implements OnInit {
 
+  acc_number: string;
+  nickname: string;
+  re_acc_number: string;
+
   constructor() { }
 
   ngOnInit(): void {
