@@ -38,9 +38,9 @@ namespace OnlineBankingSystem.Domain.Models
         public DateTime? ModifiedAt { get; set; }
 
         // Collection navigation property
-        public List<BankAccount>? BankAccounts { get; set; }
+        public List<string>? BankAccounts { get; set; }
 
         // Collection navigation property
-        public List<PersonalLoanApplication>? PersonalLoanApplications { get; set; }
+        public List<string>? PersonalLoanApplications { get; set; }
     }
 }

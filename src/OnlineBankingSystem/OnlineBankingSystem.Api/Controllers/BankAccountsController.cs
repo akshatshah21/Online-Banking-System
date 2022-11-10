@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -34,14 +36,20 @@ namespace OnlineBankingSystem.Api.Controllers
         }
 
         // GET: api/BankAccounts/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<BankAccountDto>> GetBankAccount(string id)
+        [Authorize]
+        [HttpGet("{accountNumber}")]
+        public async Task<ActionResult<BankAccountDto>> GetBankAccount(string accountNumber)
         {
-            var bankAccount = await _context.BankAccounts.FindAsync(id);
-
+            var authenticatedCustomerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var bankAccount = await _context.BankAccounts.FindAsync(accountNumber);
             if (bankAccount == null)
             {
-                return NotFound();
+                return NotFound("Account does not exist");
+            }
+
+            if (authenticatedCustomerId != bankAccount.CustomerId)
+            {
+                return Unauthorized();
             }
 
             return _mapper.Map<BankAccount, BankAccountDto>(bankAccount);
@@ -128,14 +136,20 @@ namespace OnlineBankingSystem.Api.Controllers
         }
 
         // POST: api/BankAccounts/5/AddBeneficiary
+        [Authorize]
         [HttpPost("{accountNumber}/add-beneficiary")]
         public async Task<IActionResult> AddBeneficiary(string accountNumber, [FromBody] BeneficiaryDto addBeneficiaryDto)
         {
+            var authenticatedCustomerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var bankAccount = await _context.BankAccounts.FindAsync(accountNumber);
-
             if (bankAccount == null)
             {
                 return NotFound("Account does not exist");
+            }
+
+            if (authenticatedCustomerId != bankAccount.CustomerId || accountNumber == addBeneficiaryDto.AccountNumber)
+            {
+                return Unauthorized();
             }
 
             var beneficiary = await _context.BankAccounts.FindAsync(addBeneficiaryDto.AccountNumber);
@@ -176,13 +190,20 @@ namespace OnlineBankingSystem.Api.Controllers
         }
 
 
+        [Authorize]
         [HttpGet("{accountNumber}/beneficiaries")]
         public async Task<ActionResult<IEnumerable<BeneficiaryDto>>> GetBeneficiaries(string accountNumber)
         {
+            var authenticatedCustomerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var bankAccount = await _context.BankAccounts.FindAsync(accountNumber);
             if (bankAccount == null)
             {
-                return NotFound();
+                return NotFound("Account does not exist");
+            }
+
+            if (authenticatedCustomerId != bankAccount.CustomerId)
+            {
+                return Unauthorized();
             }
 
             await _context.Entry(bankAccount).Collection("Beneficiaries").LoadAsync();
@@ -191,13 +212,20 @@ namespace OnlineBankingSystem.Api.Controllers
             return Ok(beneficiaries);
         }
 
+        [Authorize]
         [HttpDelete("{accountNumber}/remove-beneficiary")]
         public async Task<IActionResult> DeleteBeneficiary(string accountNumber, [FromBody] BeneficiaryDto beneficiaryDto)
         {
+            var authenticatedCustomerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var bankAccount = await _context.BankAccounts.FindAsync(accountNumber);
             if (bankAccount == null)
             {
-                return NotFound();
+                return NotFound("Account does not exist");
+            }
+
+            if (authenticatedCustomerId != bankAccount.CustomerId)
+            {
+                return Unauthorized();
             }
 
             await _context.Entry(bankAccount).Collection("Beneficiaries").LoadAsync();
@@ -227,13 +255,20 @@ namespace OnlineBankingSystem.Api.Controllers
 
 
         // GET all transactions of an account
+        [Authorize]
         [HttpGet("{accountNumber}/transactions")]
         public async Task<ActionResult<IEnumerable<TransactionDto>>> GetTransactionsOfAccount(string accountNumber)
         {
+            var authenticatedCustomerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var bankAccount = await _context.BankAccounts.FindAsync(accountNumber);
             if (bankAccount == null)
             {
-                return NotFound();
+                return NotFound("Account does not exist");
+            }
+
+            if (authenticatedCustomerId != bankAccount.CustomerId)
+            {
+                return Unauthorized();
             }
 
             await _context.Entry(bankAccount).Collection("SentTransactions").LoadAsync();

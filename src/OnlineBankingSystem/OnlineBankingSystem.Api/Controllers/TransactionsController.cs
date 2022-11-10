@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -52,18 +54,25 @@ namespace OnlineBankingSystem.Api.Controllers
 
         // POST: api/Transactions
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<Transaction>> PostTransaction([FromBody] InitiateTransactionDto initiateTransactionDto)
         {
-            if (!DoesBankAccountExist(initiateTransactionDto.FromAccountNumber))
+            var authenticatedCustomerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var sender = await _context.BankAccounts.FindAsync(initiateTransactionDto.FromAccountNumber);
+            if (sender == null)
             {
-                return NotFound("Sender account not found");
+                return NotFound("Account does not exist");
+            }
+
+            if (authenticatedCustomerId != sender.CustomerId)
+            {
+                return Unauthorized();
             }
             if(!DoesBankAccountExist(initiateTransactionDto.ToAccountNumber)) {
                 return NotFound("Receiver account not found");
             }
 
-            var sender = await _context.BankAccounts.FindAsync(initiateTransactionDto.FromAccountNumber);
             if (sender.TransactionPin != initiateTransactionDto.TransactionPin)
             {
                 return Unauthorized("Incorrect transaction PIN");

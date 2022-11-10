@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -34,9 +36,16 @@ namespace OnlineBankingSystem.Api.Controllers
         }
 
         // GET: api/Customers/5
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<CustomerDto>> GetCustomer(string id)
         {
+            var authenticatedCustomerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (authenticatedCustomerId != id)
+            {
+                return Unauthorized();
+            }
+            
             var customer = await _context.Customers.FindAsync(id);
 
             if (customer == null)
@@ -49,9 +58,15 @@ namespace OnlineBankingSystem.Api.Controllers
 
         // PUT: api/Customers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCustomer(string id, CustomerDto customerDto)
         {
+            var authenticatedCustomerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (authenticatedCustomerId != id)
+            {
+                return Unauthorized();
+            }
             var customer = await _context.Customers.FindAsync(id);
             if (customer == null)
             {
