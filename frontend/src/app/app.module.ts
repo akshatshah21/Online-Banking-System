@@ -15,6 +15,11 @@ import { LoginComponent } from './login/login.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from "@angular/material/form-field";
+import { HomComponent } from './hom/hom.component';
+import { BeneficiaryComponent } from './beneficiary/beneficiary.component';
+import { HelComponent } from './hel/hel.component';
+import { BeneNewComponent } from './bene-new/bene-new.component';
+import { BeneManageComponent } from './bene-manage/bene-manage.component';
 // import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
@@ -26,7 +31,13 @@ import { MatFormFieldModule } from "@angular/material/form-field";
     AccountDetailsComponent,
     TransferComponent,
     BeneficiaryListComponent,
-    LoginComponent
+    LoginComponent,
+    HomComponent,
+    LoginComponent,
+    BeneficiaryComponent,
+    BeneNewComponent,
+    BeneManageComponent,
+    HelComponent
   ],
   imports: [
     BrowserModule,
