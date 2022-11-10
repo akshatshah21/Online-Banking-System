@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -12,6 +12,7 @@ import { TransferComponent } from './components/transfer/transfer.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { BeneficiaryListComponent } from './components/beneficiary-list/beneficiary-list.component';
 import { TransactionsListComponent } from './components/transactions-list/transactions-list.component';
+import { AuthInterceptor } from './services/auth-interceptor';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,9 @@ import { TransactionsListComponent } from './components/transactions-list/transa
     FormsModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

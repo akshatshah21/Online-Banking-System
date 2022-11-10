@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import IBankAccount from './interfaces/bank-account';
+import { AuthService } from './services/auth.service';
 import { BankApiService } from './services/bank-api.service';
 
 @Component({
@@ -13,7 +14,7 @@ export class AppComponent implements OnInit, OnDestroy {
   accountDetailsSub: Subscription;
   bankAccount: IBankAccount
 
-  constructor(private bankApiService: BankApiService) { }
+  constructor(private bankApiService: BankApiService, private authService: AuthService) { }
 
   refreshAccountDetails(): void {
     console.log("update")
