@@ -12,7 +12,7 @@ import { BankApiService } from 'src/app/services/bank-api.service';
 export class TransactionsListComponent implements OnInit, OnDestroy {
 
   @Input() bankAccountNumber: string;
-  transactions: IHistoricalTransaction[];
+  @Input() transactions: IHistoricalTransaction[];
   sub: Subscription;
 
   constructor(private bankApiService: BankApiService) { }

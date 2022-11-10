@@ -25,6 +25,7 @@ export class TransferComponent implements OnInit, OnDestroy {
   error: string | undefined;
 
   @Output() updateAccountDetails: EventEmitter<void> = new EventEmitter<void>();
+  @Output() updateTransactions: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(private bankApiService: BankApiService) { }
 
@@ -49,6 +50,7 @@ export class TransferComponent implements OnInit, OnDestroy {
         console.log(transaction);
         // TODO: Show successful txn in popup
         this.updateAccountDetails.emit();
+        this.updateTransactions.emit();
       },
       error: err => {
         console.log(err);
